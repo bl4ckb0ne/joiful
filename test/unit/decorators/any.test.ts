@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import { testConstraint, assertClassSchemaEquals } from '../testUtil';
 import * as jf from '../../../src';
 import { getJoiSchema } from '../../../src/core';

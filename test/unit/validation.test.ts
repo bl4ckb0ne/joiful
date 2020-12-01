@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import { partialOf } from 'jest-helpers';
 import { mocked } from 'ts-jest/utils';
 import {
@@ -27,6 +27,8 @@ describe('ValidationResult', () => {
                 emailAddress: 'joe@example.com',
             },
             error: null,
+            errors: null,
+            warning: null,
         };
         invalid = {
             value: {
@@ -44,8 +46,10 @@ describe('ValidationResult', () => {
                     },
                 ],
                 annotate: () => '',
-                _object: null,
-            },
+                _original: null,
+            } as Joi.ValidationError,
+            errors: null,
+            warning: null,
         };
     });
 
@@ -90,42 +94,28 @@ describe('Validation', () => {
     let loginSchema: Joi.ObjectSchema;
     let loginArraySchema: Joi.ArraySchema;
     let joi: typeof Joi;
-    //const dummyArrayItemSchema = Object.freeze({});
-    //const dummySchema = Object.freeze({});
 
     function mockJoiValidateSuccess<T>(value: T) {
         mocked(loginSchema).validate.mockReturnValueOnce({
-            // TODO: will be nullables
-            error: Joi.ValidationError,
-            errors: Joi.ValidationError,
-            warning: Joi.ValidationError,
             value: value,
         });
         mocked(loginArraySchema).validate.mockReturnValueOnce({
-            // TODO: will be nullables
-            error: Joi.ValidationError,
-            errors: Joi.ValidationError,
-            warning: Joi.ValidationError,
             value: value,
         });
     }
 
-    /*
-    function assertValidateInvocation<T>(value: T, expectedSchema: Readonly<{}> = dummySchema) {
-        expect(loginSchema.validate).toHaveBeenCalledTimes(1);
-        expect(loginSchema.validate).toHaveBeenCalledWith(value, expectedSchema, {});
-    }
-    */
-
     function assertValidateSuccess<T>(result: ValidationResult<T>, expectedValue: T) {
         expect(result.value).toEqual(expectedValue);
-        //TODO: restore when errors are nullable
-        //expect(result.error).toBe(null);
+        expect(result.error).toBe(null);
+        expect(result.errors).toBe(null);
+        expect(result.warning).toBe(null);
     }
 
     function assertValidateFailure<T>(result: ValidationResult<T>, expectedValue: T) {
         expect(result.value).toEqual(expectedValue);
         expect(result.error).toBeTruthy();
+        expect(result.errors).toBe(null);
+        expect(result.warning).toBe(null);
     }
 
     beforeEach(() => {
