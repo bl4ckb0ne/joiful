@@ -104,6 +104,11 @@ describe('Validation', () => {
         });
     }
 
+    function assertValidateInvocation<T>(schema: Joi.Schema, value: T) {
+        expect(schema.validate).toHaveBeenCalledTimes(1);
+        expect(schema.validate).toHaveBeenCalledWith(value, {});
+    }
+
     function assertValidateSuccess<T>(result: ValidationResult<T>, expectedValue: T) {
         expect(result.value).toEqual(expectedValue);
         expect(result.error).toBe(null);
@@ -158,7 +163,7 @@ describe('Validation', () => {
             const validator = new Validator({ joi });
             const result = validator.validate(login);
             assertValidateSuccess(result, login);
-            //assertValidateInvocation(login);
+            assertValidateInvocation(loginSchema, login);
         });
     });
 
@@ -196,7 +201,7 @@ describe('Validation', () => {
                 mockJoiValidateSuccess(login);
                 const result = validator.validate(login, { joi });
                 assertValidateSuccess(result, login);
-                //assertValidateInvocation(login);
+                assertValidateInvocation(loginSchema, login);
             });
 
             it('should error when trying to validate null', () => {
@@ -220,7 +225,7 @@ describe('Validation', () => {
                 mockJoiValidateSuccess(inputValue);
                 const result = validator.validateAsClass(inputValue, Login, { joi });
                 assertValidateSuccess(result, login);
-                //assertValidateInvocation(inputValue);
+                assertValidateInvocation(loginSchema, login);
             });
 
             it('should error when trying to validate null', () => {
@@ -257,7 +262,7 @@ describe('Validation', () => {
                 mockJoiValidateSuccess(inputValue);
                 const result = validator.validateArrayAsClass(inputValue, Login, { joi });
                 assertValidateSuccess(result, [login]);
-                //assertValidateInvocation(inputValue, dummyArrayItemSchema);
+                assertValidateInvocation(loginArraySchema, [login]);
             });
 
             it('should error when trying to validate null', () => {
